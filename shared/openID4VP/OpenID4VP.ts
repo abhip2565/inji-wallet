@@ -160,6 +160,10 @@ class OpenID4VP {
                     matchingVcInfo: new VCInfo(
                       getVcKey(credentialData),
                       credentialData.vcMetadata,
+                      getVcShareability(
+                        credentialData,
+                        getDcqlHolderBindingRequirement(vpRequest, queryId),
+                      ),
                     ),
                     matchedClaims: matchedCredential.matchingClaims,
                   } as VcWithMatchedClaims;
@@ -433,7 +437,11 @@ function getVcsMatchingPresentationExchangeAuthRequest(
             matchingVCs[inputDescriptor.id] = [];
           }
           matchingVCs[inputDescriptor.id].push(
-            new VCInfo(getVcKey(vc), vc.vcMetadata),
+            new VCInfo(
+              getVcKey(vc),
+              vc.vcMetadata,
+              getVcShareability(vc, true),
+            ),
           );
         }
       },
@@ -442,7 +450,8 @@ function getVcsMatchingPresentationExchangeAuthRequest(
 
   if (!hasFormatOrConstraints && inputDescriptors.length > 0) {
     matchingVCs[inputDescriptors[0].id] = vcs.map(
-      vc => new VCInfo(getVcKey(vc), vc.vcMetadata),
+      vc =>
+        new VCInfo(getVcKey(vc), vc.vcMetadata, getVcShareability(vc, true)),
     );
   }
 
@@ -458,6 +467,63 @@ function getVcsMatchingPresentationExchangeAuthRequest(
     requestedClaims: requestedClaimsByVerifier,
     purpose: presentationDefinition.purpose ?? '',
   };
+}
+
+function getDcqlHolderBindingRequirement(vpRequest: any, queryId: string) {
+  const query = vpRequest?.dcql_query?.credentials?.find(
+    (credentialQuery: any) => credentialQuery.id === queryId,
+  );
+  return query?.require_cryptographic_holder_binding !== false;
+}
+
+export function getVcShareability(vc: VC, requiresHolderBinding: boolean) {
+  if (!requiresHolderBinding || vc.vcMetadata.format !== VCFormat.ldp_vc) {
+    return {shareable: true};
+  }
+
+  const credential: any = vc.verifiableCredential?.credential;
+  const contexts = credential?.['@context'];
+  if (
+    !Array.isArray(contexts) ||
+    contexts[0] !== 'https://www.w3.org/ns/credentials/v2'
+  ) {
+    return {shareable: true};
+  }
+
+  const subject = Array.isArray(credential.credentialSubject)
+    ? credential.credentialSubject[0]
+    : credential.credentialSubject;
+  const holderId = subject?.id;
+  let algorithm = vc.vcMetadata.downloadKeyType;
+
+  if (typeof holderId === 'string' && holderId.startsWith('did:jwk:')) {
+    try {
+      const jwk = decodeDidJwk(holderId);
+      algorithm =
+        jwk.alg ??
+        (jwk.kty === 'OKP' && jwk.crv === 'Ed25519'
+          ? 'EdDSA'
+          : jwk.kty === 'EC' && jwk.crv === 'P-256'
+          ? 'ES256'
+          : jwk.kty === 'EC' && jwk.crv === 'secp256k1'
+          ? 'ES256K'
+          : jwk.kty === 'RSA'
+          ? 'RS256'
+          : 'unknown');
+    } catch (_error) {
+      algorithm = 'unknown';
+    }
+  }
+
+  const normalized = String(algorithm ?? 'unknown');
+  const shareable = ['EdDSA', 'Ed25519', 'ES256'].includes(normalized);
+  return shareable
+    ? {shareable: true, holderAlgorithm: normalized}
+    : {
+        shareable: false,
+        reasonCode: 'unsupported_vcdm2_holder_key' as const,
+        holderAlgorithm: normalized,
+      };
 }
 
 function areVCFormatAndProofTypeMatchingRequest(

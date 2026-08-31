@@ -1,4 +1,4 @@
-import {VCMetadata} from "../VCMetadata";
+import {VCMetadata} from '../VCMetadata';
 
 export interface UnsignedVPToken {
   id: string;
@@ -61,11 +61,25 @@ export interface Claim {
 }
 
 export class VCInfo {
-  vcKey: string
-  metadata: VCMetadata
+  vcKey: string;
+  metadata: VCMetadata;
+  shareable: boolean;
+  reasonCode?: 'unsupported_vcdm2_holder_key';
+  holderAlgorithm?: string;
 
-  constructor(vcKey: string, metadata: VCMetadata) {
-    this.vcKey = vcKey
-    this.metadata = metadata
+  constructor(
+    vcKey: string,
+    metadata: VCMetadata,
+    shareability: {
+      shareable: boolean;
+      reasonCode?: 'unsupported_vcdm2_holder_key';
+      holderAlgorithm?: string;
+    } = {shareable: true},
+  ) {
+    this.vcKey = vcKey;
+    this.metadata = metadata;
+    this.shareable = shareability.shareable;
+    this.reasonCode = shareability.reasonCode;
+    this.holderAlgorithm = shareability.holderAlgorithm;
   }
 }

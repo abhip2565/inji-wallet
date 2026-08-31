@@ -1,21 +1,25 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {View} from 'react-native';
-import {Column} from '../../../ui';
+import {Column, Text} from '../../../ui';
 import {Theme} from '../../../ui/styleUtils';
 import {VcItemContainer} from '../../../VC/VcItemContainer';
 import {VCItemContainerFlowType} from '../../../../shared/Utils';
-import {CredentialSetOption, MatchResult, VcWithMatchedClaims,} from '../../../../shared/openID4VP/openid4vp.types';
+import {
+  CredentialSetOption,
+  MatchResult,
+  VcWithMatchedClaims,
+} from '../../../../shared/openID4VP/openid4vp.types';
 import {Divider} from '../../../ui/divider/Divider';
 import {CheckboxSelectionType} from '../../../ui/checkbox/Checkbox';
 import {VCFormat} from '../../../../shared/VCFormat';
 import {useTranslation} from 'react-i18next';
 import testIDProps from '../../../../shared/commonUtil';
 import {claimPathPointersToJsonPath} from '../../../../shared/openID4VP/OpenID4VPHelper';
-import {ExpandableListSheetView} from "../../../ui/expandableList/ExpandableListSheetView";
-import {InfoBox} from "../../../ui/InfoBox";
-import {styles} from "./Styles";
-import MultipleCardsSection from "./MultipleCardsSection";
-import SectionHeader from "./SectionHeader";
+import {ExpandableListSheetView} from '../../../ui/expandableList/ExpandableListSheetView';
+import {InfoBox} from '../../../ui/InfoBox';
+import {styles} from './Styles';
+import MultipleCardsSection from './MultipleCardsSection';
+import SectionHeader from './SectionHeader';
 
 export type OptionSelectionState = Record<number, Record<string, Set<string>>>;
 
@@ -38,17 +42,17 @@ interface DcqlCredentialSetSectionProps {
 }
 
 export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
-                                                                                credentialSet,
-                                                                                matchingVCsResult,
-                                                                                satisfiableOptions,
-                                                                                selectedVcKeys,
-                                                                                selectVcs,
-                                                                                deselectVcs,
-                                                                                testId,
-                                                                                stepLabel,
-                                                                                initialSelectionState,
-                                                                                onSelectionChange,
-                                                                              }) => {
+  credentialSet,
+  matchingVCsResult,
+  satisfiableOptions,
+  selectedVcKeys,
+  selectVcs,
+  deselectVcs,
+  testId,
+  stepLabel,
+  initialSelectionState,
+  onSelectionChange,
+}) => {
   // Per-option selection tracking: { optionIndex -> { credentialQueryId -> Set<vcKey> } }
   // This is the source of truth for UI selection state. It ensures that when two options
   // share the same credential query ID (e.g. "gov"), selecting option 1's "gov" does not
@@ -66,9 +70,8 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
   };
 
   const getPriorityVcKey = (optionIndex: number, credentialQueryId: string) => {
-    const vcKeys = selectedQueryIdToCredentialsByOption[optionIndex]?.[
-      credentialQueryId
-    ];
+    const vcKeys =
+      selectedQueryIdToCredentialsByOption[optionIndex]?.[credentialQueryId];
 
     if (!vcKeys || vcKeys.size === 0) {
       return undefined;
@@ -93,14 +96,21 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
           return;
         }
 
-        const matchingSelectedVcKeys = matchResult.matchingVcs
-          .map(matchingCredentialData => (matchingCredentialData.matchingVcInfo).vcKey)
+        const shareableMatches = matchResult.matchingVcs.filter(
+          item => item.matchingVcInfo.shareable,
+        );
+        if (shareableMatches.length === 0) return;
+        const matchingSelectedVcKeys = shareableMatches
+          .map(
+            matchingCredentialData =>
+              matchingCredentialData.matchingVcInfo.vcKey,
+          )
           .filter(vcKey => currentlySelectedVcKeys.has(vcKey));
 
         const vcKeysToPreselect =
           matchingSelectedVcKeys.length > 0
             ? matchingSelectedVcKeys
-            : [(matchResult.matchingVcs[0].matchingVcInfo).vcKey];
+            : [shareableMatches[0].matchingVcInfo.vcKey];
 
         if (matchingSelectedVcKeys.length > 0) {
           matchedSelectedQueryCount++;
@@ -165,8 +175,10 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
               return false;
             }
             const matchingSelectedVcKeys = matchResult.matchingVcs
-              .map(matchingCredentialData =>
-                (matchingCredentialData.matchingVcInfo).vcKey,
+              .filter(item => item.matchingVcInfo.shareable)
+              .map(
+                matchingCredentialData =>
+                  matchingCredentialData.matchingVcInfo.vcKey,
               )
               .filter(vcKey => selectedVcKeys.has(vcKey));
             return matchingSelectedVcKeys.length > 0;
@@ -243,10 +255,11 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
         if (currentOptionSelectedVcs?.[credentialQueryId]) {
           tempVcKeysToSelect = currentOptionSelectedVcs[credentialQueryId];
         } else {
-          const firstVc =
-            matchingVCsResult[credentialQueryId]?.matchingVcs?.[0];
+          const firstVc = matchingVCsResult[
+            credentialQueryId
+          ]?.matchingVcs?.find(item => item.matchingVcInfo.shareable);
           if (!firstVc) return;
-          const vcKey = (firstVc.matchingVcInfo).vcKey;
+          const vcKey = firstVc.matchingVcInfo.vcKey;
           tempVcKeysToSelect = new Set<string>([vcKey]);
         }
         newState[credentialQueryId] = tempVcKeysToSelect;
@@ -270,7 +283,7 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
     return (
       selectedQueryIdToCredentialsByOption[optionIndex]?.[
         credentialQueryId
-        ]?.has(vcKey) ?? false
+      ]?.has(vcKey) ?? false
     );
   };
 
@@ -400,15 +413,15 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
       };
       prevSelectedQueryIdToCredentialsByOption[currentOptionIndex]?.[
         credentialQueryId
-        ]?.delete(vcKey);
+      ]?.delete(vcKey);
       if (
         prevSelectedQueryIdToCredentialsByOption[currentOptionIndex]?.[
           credentialQueryId
-          ]?.size === 0
+        ]?.size === 0
       ) {
         delete prevSelectedQueryIdToCredentialsByOption[currentOptionIndex][
           credentialQueryId
-          ];
+        ];
       }
       if (
         prevSelectedQueryIdToCredentialsByOption[currentOptionIndex] &&
@@ -423,17 +436,17 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
 
     // Appends a VC key to the current option's selection for a given query ID.
     // baseState: The cleaned state (without deselected options) to build upon.
-    const appendVcKeyToCurrentSelection = (baseState: Record<number, Record<string, Set<string>>>) => {
+    const appendVcKeyToCurrentSelection = (
+      baseState: Record<number, Record<string, Set<string>>>,
+    ) => {
       const existingVcKeys = Array.from(
-        baseState[currentOptionIndex]?.[
-          credentialQueryId
-        ] ?? [],
+        baseState[currentOptionIndex]?.[credentialQueryId] ?? [],
       );
 
       return {
         ...baseState,
         [currentOptionIndex]: {
-          ...baseState[currentOptionIndex] ?? {},
+          ...(baseState[currentOptionIndex] ?? {}),
           [credentialQueryId]: new Set([vcKey, ...existingVcKeys]),
         },
       };
@@ -468,7 +481,12 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
         // If allowing multiple, just add this vc to the current selection without deselecting other VCs for this query
         newState = appendVcKeyToCurrentSelection(toBeUpdated);
       } else {
-        deselectVcs({[credentialQueryId]: prevSelectedQueryIdToCredentialsByOption[currentOptionIndex]?.[credentialQueryId]})
+        deselectVcs({
+          [credentialQueryId]:
+            prevSelectedQueryIdToCredentialsByOption[currentOptionIndex]?.[
+              credentialQueryId
+            ],
+        });
         newState = {
           [currentOptionIndex]: {
             ...prevSelectedQueryIdToCredentialsByOption[currentOptionIndex],
@@ -488,7 +506,8 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
   function getSelectivelyDisclosableMatchedClaimPaths(
     matchingCredentialDataResult: VcWithMatchedClaims,
   ): Set<string> | undefined {
-    const vcFormat = matchingCredentialDataResult.matchingVcInfo.metadata.format;
+    const vcFormat =
+      matchingCredentialDataResult.matchingVcInfo.metadata.format;
     if (vcFormat == VCFormat.dc_sd_jwt || vcFormat == VCFormat.vc_sd_jwt) {
       const jsonPaths = matchingCredentialDataResult.matchedClaims?.map(claim =>
         claimPathPointersToJsonPath(claim.path),
@@ -508,26 +527,36 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
     optionIndex: number,
     disableSelection = false,
   ) => {
-    const {vcKey, metadata: vcMetadata} = matchingCredentialData.matchingVcInfo
+    const vcInfo = matchingCredentialData.matchingVcInfo;
+    const {vcKey, metadata: vcMetadata} = vcInfo;
 
     return (
-      <VcItemContainer
-        sdClaimsPath={getSelectivelyDisclosableMatchedClaimPaths(
-          matchingCredentialData,
+      <Fragment>
+        <VcItemContainer
+          sdClaimsPath={getSelectivelyDisclosableMatchedClaimPaths(
+            matchingCredentialData,
+          )}
+          minimalDisclosure
+          key={`${vcKey}-option-${optionIndex}-query-${credentialQueryId}`}
+          vcMetadata={vcMetadata}
+          margin="0 2 8 2"
+          onPress={() => handleVcSelection(vcKey)}
+          selectable
+          disableSelection={disableSelection || !vcInfo.shareable}
+          selectionType={selectionType}
+          selected={isVcSelected(credentialQueryId, vcKey)}
+          flow={VCItemContainerFlowType.VP_SHARE}
+          isPinned={vcMetadata.isPinned}
+          testId={`${testId}-option-${optionIndex}-query-${credentialQueryId}-vc-${vcKey}`}
+        />
+        {!vcInfo.shareable && (
+          <Text color={Theme.Colors.errorMessage} margin="0 4 8 4">
+            {t('unsupportedVcdm2HolderKey', {
+              algorithm: vcInfo.holderAlgorithm ?? 'unknown',
+            })}
+          </Text>
         )}
-        minimalDisclosure
-        key={`${vcKey}-option-${optionIndex}-query-${credentialQueryId}`}
-        vcMetadata={vcMetadata}
-        margin="0 2 8 2"
-        onPress={() => handleVcSelection(vcKey)}
-        selectable
-        disableSelection={disableSelection}
-        selectionType={selectionType}
-        selected={isVcSelected(credentialQueryId, vcKey)}
-        flow={VCItemContainerFlowType.VP_SHARE}
-        isPinned={vcMetadata.isPinned}
-        testId={`${testId}-option-${optionIndex}-query-${credentialQueryId}-vc-${vcKey}`}
-      />
+      </Fragment>
     );
   };
 
@@ -536,7 +565,7 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
     optionIndex: number,
     handleVcSelection: (vcKey: string) => void,
     isVcSelected: (credentialQueryId: string, vcKey: string) => boolean,
-    isMultipleCardsOption: boolean
+    isMultipleCardsOption: boolean,
   ) => {
     const matchResult = matchingVCsResult[credentialQueryId];
     if (!matchResult || matchResult.matchingVcs?.length === 0) return null;
@@ -570,8 +599,10 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
       <Fragment>
         <InfoBox
           style={{marginHorizontal: 4}}
-          message={"One card is selected. Tap \"Show more\" to see additional options."}
-          testID={"more-cards-matching-info"}
+          message={
+            'One card is selected. Tap "Show more" to see additional options.'
+          }
+          testID={'more-cards-matching-info'}
           backgroundColor={Theme.Colors.infoBackground}
           borderColor={Theme.Colors.infoBorder}
           textColor={Theme.Colors.infoText}
@@ -579,42 +610,39 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
         <ExpandableListSheetView
           items={matchResult.matchingVcs ?? []}
           testID={`${testId}-option-${optionIndex}-query-${credentialQueryId}-multi-vc`}
-          introText={""}
-          title={"Cards"}
-          footerText={""}
-          closeText={"Close"}
+          introText={''}
+          title={'Cards'}
+          footerText={''}
+          closeText={'Close'}
           alignShowMoreTextAtRight
-          showMoreText={() => "Show all cards"}
+          showMoreText={() => 'Show all cards'}
           priorityItemPredicate={item =>
-            getPriorityVcKey(optionIndex, credentialQueryId) === item.matchingVcInfo.vcKey
+            getPriorityVcKey(optionIndex, credentialQueryId) ===
+            item.matchingVcInfo.vcKey
           }
           keyExtractor={(item, _index, isExpanded) =>
-            `${item.matchingVcInfo.vcKey}-${isExpanded ? 'expanded' : 'collapsed'}`
+            `${item.matchingVcInfo.vcKey}-${
+              isExpanded ? 'expanded' : 'collapsed'
+            }`
           }
           visibleItemsStyle={{}}
           collapsedItemCount={1}
-          renderItem={
-            ({item}) => {
-              return renderCardView(
-                item,
-                credentialQueryId,
-                handleVcSelection,
-                selectionType,
-                isVcSelected,
-                optionIndex,
-              )
-            }
-          }
+          renderItem={({item}) => {
+            return renderCardView(
+              item,
+              credentialQueryId,
+              handleVcSelection,
+              selectionType,
+              isVcSelected,
+              optionIndex,
+            );
+          }}
         />
       </Fragment>
     );
 
     if (isMultipleCardsOption) {
-      return (
-        <View style={styles.dottedBorderContainer}>
-          {content}
-        </View>
-      );
+      return <View style={styles.dottedBorderContainer}>{content}</View>;
     }
 
     return content;
@@ -625,8 +653,11 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
 
   return (
     <View {...testIDProps(testId)} style={Theme.DcqlStyles.sectionContainer}>
-      <SectionHeader required={isRequired}
-                     sectionSatisfied={isSectionSatisfied} stepLabel={stepLabel} testId={testId}
+      <SectionHeader
+        required={isRequired}
+        sectionSatisfied={isSectionSatisfied}
+        stepLabel={stepLabel}
+        testId={testId}
       />
       <Column>
         {satisfiableOptions.map((option, optionIndex) => {
@@ -643,7 +674,9 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
               {isMultipleCardsCombinedOption(option) ? (
                 // Case 1: the option has multiple credential queries - Combination of credential queries need to be selected together
                 <MultipleCardsSection
-                  key={`multiple-cards-${optionIndex}`} testId={testId} optionIndex={optionIndex}
+                  key={`multiple-cards-${optionIndex}`}
+                  testId={testId}
+                  optionIndex={optionIndex}
                   checked={isOptionSelected(option, optionIndex)}
                   onPress={() => handleOptionToggle(option, optionIndex)}
                   title={t('dcqlSection.multipleCards')}
@@ -660,9 +693,10 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
                         ),
                       (credentialQueryId: string, vcKey: string) =>
                         isVcSelected(credentialQueryId, vcKey, optionIndex),
-                      true
+                      true,
                     );
-                  }}/>
+                  }}
+                />
               ) : (
                 // Case 2: the option has only one credential query - Only one credential query needs to be selected
                 renderCredentialsMatchingQueryId(
@@ -672,7 +706,7 @@ export const CredentialSetSection: React.FC<DcqlCredentialSetSectionProps> = ({
                     handleVCSelection(vcKey, option[0], optionIndex),
                   (credentialQueryId: string, vcKey: string) =>
                     isVcSelected(credentialQueryId, vcKey, optionIndex),
-                  false
+                  false,
                 )
               )}
             </View>

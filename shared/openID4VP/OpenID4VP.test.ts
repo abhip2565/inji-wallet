@@ -2,7 +2,7 @@ import type {VC} from '../../machines/VerifiableCredential/VCMetaMachine/vc';
 import {NativeModules, Platform} from 'react-native';
 import {isIOS} from '../constants';
 // Import OpenID4VP here to ensure jest.mocks are applied before module loading
-import OpenID4VPModule from './OpenID4VP';
+import OpenID4VPModule, {getVcShareability} from './OpenID4VP';
 import {MatchingVCsResultForDcql, VCInfo} from './openid4vp.types';
 import {
   claimPathPointersToJsonPath,
@@ -284,6 +284,55 @@ describe('OpenID4VP', () => {
         },
       },
     } as never);
+  });
+
+  describe('getVcShareability', () => {
+    const buildVc = (
+      downloadKeyType: string,
+      context = 'https://www.w3.org/ns/credentials/v2',
+    ) =>
+      ({
+        vcMetadata: {id: 'credential-id', format: 'ldp_vc', downloadKeyType},
+        verifiableCredential: {
+          credential: {
+            '@context': [context],
+            credentialSubject: {id: 'did:example:holder'},
+          },
+        },
+      } as VC);
+
+    it.each(['EdDSA', 'ES256'])(
+      'allows VC 2.0 holder binding with %s',
+      algorithm => {
+        expect(getVcShareability(buildVc(algorithm), true).shareable).toBe(
+          true,
+        );
+      },
+    );
+
+    it.each(['RS256', 'ES256K'])(
+      'blocks VC 2.0 holder binding with %s',
+      algorithm => {
+        expect(getVcShareability(buildVc(algorithm), true)).toEqual({
+          shareable: false,
+          reasonCode: 'unsupported_vcdm2_holder_key',
+          holderAlgorithm: algorithm,
+        });
+      },
+    );
+
+    it('allows VC 2.0 when DCQL does not require holder binding', () => {
+      expect(getVcShareability(buildVc('RS256'), false).shareable).toBe(true);
+    });
+
+    it('keeps legacy VC 1.1 RSA sharing available', () => {
+      expect(
+        getVcShareability(
+          buildVc('RS256', 'https://www.w3.org/2018/credentials/v1'),
+          true,
+        ).shareable,
+      ).toBe(true);
+    });
   });
 
   describe('authenticateVerifier', () => {

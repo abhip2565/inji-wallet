@@ -1046,6 +1046,7 @@
     }
   },
   "SendVPScreen": {
+    "unsupportedVcdm2HolderKey": "تدعم مشاركة عروض VC 2.0 مفاتيح Ed25519 وP-256 فقط. تستخدم هذه البطاقة {{algorithm}}.",
     "authorizationPurpose": "حدّد البطاقة/البطاقات المطلوبة للتحقق واستلام بطاقتك الجديدة من جهة الإصدار الموثوقة.",
     "consentShare": "أوافق وأشارك",
     "requester": "جهة التحقق",

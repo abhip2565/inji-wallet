@@ -1054,6 +1054,7 @@
     }
   },
   "SendVPScreen": {
+    "unsupportedVcdm2HolderKey": "VC 2.0 presentation sharing supports only Ed25519 and P-256 keys. This card uses {{algorithm}}.",
     "authorizationPurpose": "Select the requested card(s) to get verified and receive your new card from the trusted issuer.",
     "consentAndShare": "Consent and Share",
     "requester": "Requested Cards",

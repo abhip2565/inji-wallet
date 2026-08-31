@@ -1032,6 +1032,7 @@
     }
   },
   "SendVPScreen": {
+    "unsupportedVcdm2HolderKey": "Ed25519 at P-256 key lamang ang sinusuportahan sa pagbabahagi ng VC 2.0 presentation. Gumagamit ang card na ito ng {{algorithm}}.",
     "authorizationPurpose": "Piliin ang mga hinihinging card upang ma-verify at matanggap ang iyong bagong card mula sa pinagkakatiwalaang issuer.",
     "consentShare": "Ako ay pumapayag at nagbabahagi",
     "requester": "Entity ng Pagpapatunay",

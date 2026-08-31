@@ -6,7 +6,12 @@ export const defaultWalletConfig = {
       deviceauth_alg_values: [-7],
     },
     ldp_vc: {
-      proof_type_values: ['Ed25519Signature2020', 'JsonWebSignature2020'],
+      proof_type_values: [
+        'Ed25519Signature2020',
+        'JsonWebSignature2020',
+        'DataIntegrityProof',
+      ],
+      cryptosuite_values: ['eddsa-rdfc-2022', 'ecdsa-rdfc-2019'],
     },
     'dc+sd-jwt': {
       'sd-jwt_alg_values': ['EdDSA', 'ES256'],

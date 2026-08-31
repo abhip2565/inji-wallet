@@ -6,26 +6,31 @@ import {Theme} from '../../ui/styleUtils';
 import {VcItemContainer} from '../../VC/VcItemContainer';
 import {VCItemContainerFlowType} from '../../../shared/Utils';
 import {CheckboxSelectionType} from '../../ui/checkbox/Checkbox';
-import {MatchingVCsResultForPresentationExchangeRequest, VCInfo} from "../../../shared/openID4VP/openid4vp.types";
+import {
+  MatchingVCsResultForPresentationExchangeRequest,
+  VCInfo,
+} from '../../../shared/openID4VP/openid4vp.types';
 import {usePresentationExchangeMatchingVcController} from './PresentationExchangeMatchingVcController';
-import {MatchingVcListRef} from "../matchingVc/MatchingVcListContainer";
+import {MatchingVcListRef} from '../matchingVc/MatchingVcListContainer';
 
 type PresentationExchangeMatchingVcListProps = {
   matchingVcsResult: MatchingVCsResultForPresentationExchangeRequest | null;
-  setDisableShareButton: (disable: boolean) => void
+  setDisableShareButton: (disable: boolean) => void;
 };
 
 export const PresentationExchangeMatchingVcList = forwardRef<
   MatchingVcListRef,
   PresentationExchangeMatchingVcListProps
->(function PresentationExchangeMatchingVcList({matchingVcsResult, setDisableShareButton}, ref) {
+>(function PresentationExchangeMatchingVcList(
+  {matchingVcsResult, setDisableShareButton},
+  ref,
+) {
   const {t} = useTranslation('SendVPScreen');
-  const controller = usePresentationExchangeMatchingVcController(
-    matchingVcsResult,
-  );
+  const controller =
+    usePresentationExchangeMatchingVcController(matchingVcsResult);
 
   useImperativeHandle(ref, () => ({
-    getSelectedVcs: () => (controller.selectedVcs),
+    getSelectedVcs: () => controller.selectedVcs,
     selectedDisclosures: () => controller.selectedDisclosuresByVc,
   }));
 
@@ -33,9 +38,9 @@ export const PresentationExchangeMatchingVcList = forwardRef<
 
   useEffect(() => {
     if (Object.keys(controller.selectedVcs).length > 0) {
-      setDisableShareButton(false)
+      setDisableShareButton(false);
     } else {
-      setDisableShareButton(true)
+      setDisableShareButton(true);
     }
   }, [controller.selectedVcs]);
 
@@ -73,7 +78,9 @@ export const PresentationExchangeMatchingVcList = forwardRef<
             color: Theme.Colors.Icon,
             fontFamily: 'Montserrat_600SemiBold',
           }}
-          onPress={areAllVcsChecked ? controller.UNCHECK_ALL : controller.CHECK_ALL}>
+          onPress={
+            areAllVcsChecked ? controller.UNCHECK_ALL : controller.CHECK_ALL
+          }>
           {areAllVcsChecked ? t('unCheck') : t('checkAll')}
         </Text>
       </Row>
@@ -83,31 +90,42 @@ export const PresentationExchangeMatchingVcList = forwardRef<
         backgroundColor={Theme.Colors.whiteBackgroundColor}>
         {Object.entries(matchingVcsResult?.matchingVCs ?? {}).map(
           ([inputDescriptorId, vcInfos]: [string, VCInfo[]]) =>
-            vcInfos.map(({vcKey, metadata}: VCInfo) => (
-              <VcItemContainer
-                key={`${vcKey}-${inputDescriptorId}`}
-                testId={`matching-vc-list-vc-${vcKey}-${inputDescriptorId}`}
-                vcMetadata={metadata}
-                margin="0 2 8 2"
-                onPress={controller.SELECT_VC_ITEM(
-                  vcKey,
-                  inputDescriptorId,
+            vcInfos.map((vcInfo: VCInfo) => (
+              <React.Fragment key={`${vcInfo.vcKey}-${inputDescriptorId}`}>
+                <VcItemContainer
+                  testId={`matching-vc-list-vc-${vcInfo.vcKey}-${inputDescriptorId}`}
+                  vcMetadata={vcInfo.metadata}
+                  margin="0 2 8 2"
+                  onPress={controller.SELECT_VC_ITEM(
+                    vcInfo.vcKey,
+                    inputDescriptorId,
+                  )}
+                  selectable
+                  disableSelection={!vcInfo.shareable}
+                  selected={
+                    controller.areAllVcsChecked ||
+                    (Object.keys(controller.selectedVcs).includes(
+                      inputDescriptorId,
+                    ) &&
+                      controller.selectedVcs[inputDescriptorId].has(
+                        vcInfo.vcKey,
+                      ))
+                  }
+                  selectionType={CheckboxSelectionType.MULTIPLE}
+                  flow={VCItemContainerFlowType.VP_SHARE}
+                  isPinned={vcInfo.metadata.isPinned}
+                  onDisclosuresChange={disclosures =>
+                    controller.onDisclosureChange(vcInfo.vcKey, disclosures)
+                  }
+                />
+                {!vcInfo.shareable && (
+                  <Text color={Theme.Colors.errorMessage} margin="0 4 8 4">
+                    {t('unsupportedVcdm2HolderKey', {
+                      algorithm: vcInfo.holderAlgorithm ?? 'unknown',
+                    })}
+                  </Text>
                 )}
-                selectable
-                selected={
-                  controller.areAllVcsChecked ||
-                  (Object.keys(controller.selectedVcs).includes(inputDescriptorId) &&
-                    controller.selectedVcs[
-                      inputDescriptorId
-                      ].has(vcKey))
-                }
-                selectionType={CheckboxSelectionType.MULTIPLE}
-                flow={VCItemContainerFlowType.VP_SHARE}
-                isPinned={metadata.isPinned}
-                onDisclosuresChange={disclosures =>
-                  controller.onDisclosureChange(vcKey, disclosures)
-                }
-              />
+              </React.Fragment>
             )),
         )}
       </Column>

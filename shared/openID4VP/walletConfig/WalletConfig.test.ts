@@ -13,10 +13,17 @@ describe('defaultWalletConfig', () => {
       });
     });
 
-    it('supports ldp_vc format with Ed25519Signature2020 and JsonWebSignature2020', () => {
+    it('advertises legacy and VC 2.0 Data Integrity proof support', () => {
       expect(
         defaultWalletConfig.vp_formats_supported.ldp_vc.proof_type_values,
-      ).toEqual(['Ed25519Signature2020', 'JsonWebSignature2020']);
+      ).toEqual([
+        'Ed25519Signature2020',
+        'JsonWebSignature2020',
+        'DataIntegrityProof',
+      ]);
+      expect(
+        defaultWalletConfig.vp_formats_supported.ldp_vc.cryptosuite_values,
+      ).toEqual(['eddsa-rdfc-2022', 'ecdsa-rdfc-2019']);
     });
 
     it('supports dc+sd-jwt format with EdDSA and ES256 alg values', () => {

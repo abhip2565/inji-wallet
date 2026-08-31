@@ -1,5 +1,8 @@
 import {useCallback, useMemo, useState} from 'react';
-import {MatchingVCsResultForPresentationExchangeRequest, VCInfo} from '../../../shared/openID4VP/openid4vp.types';
+import {
+  MatchingVCsResultForPresentationExchangeRequest,
+  VCInfo,
+} from '../../../shared/openID4VP/openid4vp.types';
 
 export type PresentationExchangeSelectedVcs = Record<string, Set<string>>;
 export type PresentationExchangeSelectedDisclosures = Record<string, string[]>;
@@ -7,30 +10,38 @@ export type PresentationExchangeSelectedDisclosures = Record<string, string[]>;
 export function usePresentationExchangeMatchingVcController(
   matchingVcsResult: MatchingVCsResultForPresentationExchangeRequest | null,
 ) {
-  const [selectedVcs, setSelectedVcs] = useState<PresentationExchangeSelectedVcs>(
-    {},
-  );
-  const [selectedDisclosuresByVc, setSelectedDisclosuresByVc] = useState<
-    PresentationExchangeSelectedDisclosures
-  >({});
+  const [selectedVcs, setSelectedVcs] =
+    useState<PresentationExchangeSelectedVcs>({});
+  const [selectedDisclosuresByVc, setSelectedDisclosuresByVc] =
+    useState<PresentationExchangeSelectedDisclosures>({});
 
   const totalVcCount = useMemo(
-    () => Object.values(matchingVcsResult?.matchingVCs ?? {}).flatMap(vc => vc).length,
+    () =>
+      Object.values(matchingVcsResult?.matchingVCs ?? {})
+        .flatMap(vc => vc)
+        .filter(vc => vc.shareable).length,
     [matchingVcsResult],
   );
 
   const noOfCardsSelected = useMemo(() => {
-    return Object.values(selectedVcs).reduce((vcCount, arr) => vcCount + arr.size, 0);
+    return Object.values(selectedVcs).reduce(
+      (vcCount, arr) => vcCount + arr.size,
+      0,
+    );
   }, [selectedVcs]);
 
-  const areAllVcsChecked = noOfCardsSelected === totalVcCount;
+  const areAllVcsChecked =
+    totalVcCount > 0 && noOfCardsSelected === totalVcCount;
 
-  const onDisclosureChange = useCallback((vcKey: string, disclosures: string[]) => {
-    setSelectedDisclosuresByVc(prev => ({
-      ...prev,
-      [vcKey]: disclosures,
-    }));
-  }, []);
+  const onDisclosureChange = useCallback(
+    (vcKey: string, disclosures: string[]) => {
+      setSelectedDisclosuresByVc(prev => ({
+        ...prev,
+        [vcKey]: disclosures,
+      }));
+    },
+    [],
+  );
 
   const SELECT_VC_ITEM = useCallback(
     (vcKey: string, credentialRequestId: string) => () => {
@@ -70,7 +81,9 @@ export function usePresentationExchangeMatchingVcController(
     Object.entries(matchingVcsResult.matchingVCs).forEach(
       ([credentialRequestId, vcs]) => {
         updated[credentialRequestId] = new Set<string>(
-          vcs.map((vc: VCInfo) => vc.vcKey),
+          vcs
+            .filter((vc: VCInfo) => vc.shareable)
+            .map((vc: VCInfo) => vc.vcKey),
         );
       },
     );
@@ -82,9 +95,11 @@ export function usePresentationExchangeMatchingVcController(
     (currentSelectedVcs: PresentationExchangeSelectedVcs) => {
       const queryIdToSelectedVcKeys: PresentationExchangeSelectedVcs = {};
 
-      Object.entries(currentSelectedVcs).forEach(([credentialRequestId, vcKeys]) => {
-        queryIdToSelectedVcKeys[credentialRequestId] = new Set(vcKeys);
-      });
+      Object.entries(currentSelectedVcs).forEach(
+        ([credentialRequestId, vcKeys]) => {
+          queryIdToSelectedVcKeys[credentialRequestId] = new Set(vcKeys);
+        },
+      );
 
       return queryIdToSelectedVcKeys;
     },
@@ -111,7 +126,3 @@ export function usePresentationExchangeMatchingVcController(
     isVPRequestSatisfiable,
   };
 }
-
-
-
-

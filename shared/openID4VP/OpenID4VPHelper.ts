@@ -82,6 +82,11 @@ export const signDataForVpPreparation = async (
       const payload: string = unsignedVPToken.dataToSign;
       const signatureAlgorithm: string = unsignedVPToken.signatureAlgorithm;
 
+      validateHolderAlgorithm(
+        unsignedVPToken.holderKeyReference,
+        signatureAlgorithm,
+      );
+
       const keyType =
         JWT_ALG_TO_KEY_TYPE[
           signatureAlgorithm as keyof typeof JWT_ALG_TO_KEY_TYPE
@@ -92,6 +97,16 @@ export const signDataForVpPreparation = async (
         payload, // Payload is in base64 url encoded form - decode it before signing
         signatureAlgorithm,
       );
+      if (
+        ['EdDSA', 'ES256'].includes(signatureAlgorithm) &&
+        unsignedVPToken.dataToSign &&
+        base64ToByteArray(unsignedVPToken.dataToSign).length === 64 &&
+        base64ToByteArray(signature).length !== 64
+      ) {
+        throw new Error(
+          'Data Integrity Ed25519 and P-256 signatures must be exactly 64 bytes',
+        );
+      }
       return {
         signedData: signature,
         id: unsignedVPToken.id,
@@ -102,6 +117,36 @@ export const signDataForVpPreparation = async (
   const vpTokenSigningResults = await Promise.all(result);
   return vpTokenSigningResults as Array<VPTokenSigningResult>;
 };
+
+function validateHolderAlgorithm(
+  holderKeyReference: string,
+  algorithm: string,
+) {
+  if (!holderKeyReference?.startsWith('did:jwk:')) return;
+  const encoded = holderKeyReference
+    .replace('did:jwk:', '')
+    .split('#')[0]
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  try {
+    const jwk = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+    const holderAlgorithm =
+      jwk.alg ??
+      (jwk.kty === 'OKP' && jwk.crv === 'Ed25519'
+        ? 'EdDSA'
+        : jwk.kty === 'EC' && jwk.crv === 'P-256'
+        ? 'ES256'
+        : undefined);
+    if (holderAlgorithm && holderAlgorithm !== algorithm) {
+      throw new Error(
+        'The selected signing key does not match the VC holder key',
+      );
+    }
+  } catch (error) {
+    if ((error as Error).message.includes('does not match')) throw error;
+    throw new Error('Unable to validate the VC holder key');
+  }
+}
 
 async function signData(
   privateKey: string,
