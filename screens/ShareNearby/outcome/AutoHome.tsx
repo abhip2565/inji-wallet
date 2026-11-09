@@ -9,7 +9,6 @@ import {AUTO_HOME_SECONDS} from './OutcomeActions';
 const styles = Theme.ShareNearbyStyles;
 const outcomeStyles = Theme.ShareNearbyOutcomeStyles;
 
-/** Frame 50: after a share the wallet returns Home by itself unless the holder stays (51). */
 export function AutoHome({onDone}: {onDone: () => void}) {
   const {t} = useTranslation('ShareNearby');
   const [remaining, setRemaining] = useState(AUTO_HOME_SECONDS);

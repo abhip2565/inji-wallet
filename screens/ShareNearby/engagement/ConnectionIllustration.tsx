@@ -74,10 +74,6 @@ function CardIcon({isPending}: {isPending?: boolean}) {
   );
 }
 
-/**
- * You and the verifier: dots while connecting (MDQ-02), a locked link once connected (MDQ-03),
- * and your card on its way while sending (frame 46).
- */
 export function ConnectionIllustration({
   phase,
 }: {

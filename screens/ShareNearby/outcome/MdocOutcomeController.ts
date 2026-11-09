@@ -10,7 +10,6 @@ export function useMdocOutcome({
   checkedFields,
 }: Pick<MdocOutcomeViewProps, 'matches' | 'selection' | 'checkedFields'>) {
   const {t} = useTranslation('ShareNearby');
-  // The outcome screen opens as the session ends; that moment is the time shown.
   const [endedAt] = useState(() => new Date());
   const approvedCount = countApprovedElements(
     matches,

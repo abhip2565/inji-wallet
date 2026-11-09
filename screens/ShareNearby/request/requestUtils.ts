@@ -126,7 +126,7 @@ const TRUST_RANK: Record<ReaderTrust['status'], number> = {
   verified: 2,
 };
 
-/** One verifier card per request (frame 27): show the weakest trust any document carried. */
+// Summarize the verifier using the weakest trust across requested documents.
 export function leastTrustedReader(
   documentMatches: MdocDocumentMatch[],
 ): ReaderTrust | undefined {

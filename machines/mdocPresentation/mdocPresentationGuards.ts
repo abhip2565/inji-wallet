@@ -5,7 +5,6 @@ import type {
 } from '../../shared/mdocPresentation/matching';
 import type {MdocPresentationContext} from './mdocPresentationModel';
 
-/** The checked-field key of an element, as kept in context.checkedFields. */
 export function fieldKey(element: MdocRequestedElement): string {
   return JSON.stringify([element.namespace, element.elementIdentifier]);
 }
@@ -20,7 +19,6 @@ export function checkedAvailableElements(
   );
 }
 
-/** How many details the holder approved across the selected cards: what the screens report. */
 export function countApprovedElements(
   matches: readonly MdocDocumentMatch[],
   selection: Readonly<Record<string, string>>,
@@ -41,7 +39,7 @@ export function countApprovedElements(
   }, 0);
 }
 
-/** Revoked or suspended cards are blocked; expired ones may be shared with a warning (frame 37). */
+// Revoked cards are blocked; expired cards may be shared with a warning.
 export function isShareableCandidate(candidate: MdocCandidate): boolean {
   return candidate.vc.vcMetadata.isRevoked !== 'TRUE';
 }

@@ -793,7 +793,6 @@ export const DefaultTheme = {
       alignItems: 'flex-start',
     },
     fieldLabel: {fontSize: 14, lineHeight: 18},
-    // design frame 31: requested details that are not on the card
     missingPanel: {
       backgroundColor: ShareNearbyColors.subtle,
       borderTopWidth: 1,

@@ -48,7 +48,6 @@ class InjiMdocPresentationModule(private val reactContext: ReactApplicationConte
 
     override fun getName() = "InjiMdocPresentation"
 
-    /** Runs one presentation; resolves with the result as JSON, rejects if it cannot start. */
     @ReactMethod
     fun present(optionsJson: String, promise: Promise) {
         scope.launch {
@@ -109,7 +108,6 @@ class InjiMdocPresentationModule(private val reactContext: ReactApplicationConte
         }
     }
 
-    /** Asks JS to sign with the wallet's key; returns the raw signature. */
     private suspend fun sign(input: MdocSigningInput): ByteArray {
         val signature = CompletableDeferred<JSONObject>().also { pendingSignature = it }
         emit("onMdocSignRequest", Arguments.createMap().apply {

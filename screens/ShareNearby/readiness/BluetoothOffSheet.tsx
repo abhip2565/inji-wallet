@@ -12,8 +12,7 @@ const styles = Theme.ShareNearbyStyles;
 const helpStyles = Theme.ShareNearbyHelpStyles;
 const readinessStyles = Theme.ShareNearbyReadinessStyles;
 
-// NBY-03 (Android) and frame 13 (iOS): iOS cannot switch Bluetooth on for the app, so it
-// sends the holder to Settings and continues once Bluetooth is on.
+// iOS opens Settings to enable Bluetooth; resume when Bluetooth becomes available.
 export function BluetoothOffSheet({
   visible,
   onTurnOn,

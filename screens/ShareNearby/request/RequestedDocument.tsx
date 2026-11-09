@@ -13,7 +13,7 @@ import type {SelectCard, ToggleField} from './types';
 const styles = Theme.ShareNearbyStyles;
 const reviewStyles = Theme.ShareNearbyReviewStyles;
 
-// Frame 32 offers Select all / Clear all on a long list; the 5-detail frames don't.
+// Show bulk selection controls only for long field lists.
 const LONG_LIST_LENGTH = 6;
 
 export function RequestedDocument({

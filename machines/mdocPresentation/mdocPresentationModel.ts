@@ -19,7 +19,6 @@ export type PrepareMdocForSharing = (
   vc: VC,
   elements: MdocRequestedElement[],
 ) => Promise<string>;
-/** History entry kinds for in-person mdoc sharing; one record is logged per card. */
 export type MdocShareLogType =
   | 'SHARED'
   | 'SHARED_WITH_FACE_VERIFICATION'
@@ -90,7 +89,6 @@ export const mdocPresentationModel = createModel(
     request: undefined as MdocRequest | undefined,
     matches: [] as MdocDocumentMatch[],
     selection: {} as Record<string, string>,
-    // The details the holder left ticked; only these are sent.
     checkedFields: {} as Record<string, string[]>,
     responseStarted: false,
     sentResponses: [] as SentMdocResponse[],

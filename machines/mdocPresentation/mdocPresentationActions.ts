@@ -20,7 +20,6 @@ import {
 } from './mdocPresentationModel';
 import {getPresentationOutcome} from './mdocPresentationServices';
 
-// How the session's outcome reads for its last response.
 const SENT_RESPONSE_LOG_TYPE: Partial<Record<MdocOutcome, MdocShareLogType>> = {
   shared: 'SHARED',
   sentNotConfirmed: 'SENT_NOT_CONFIRMED',
@@ -30,7 +29,6 @@ const SENT_RESPONSE_LOG_TYPE: Partial<Record<MdocOutcome, MdocShareLogType>> = {
   verifierError: 'VERIFIER_REPORTED_PROBLEM',
 };
 
-/** The card chosen for each requested document, with the ticked details it holds when sent. */
 function selectedCards(
   context: MdocPresentationContext,
   withDetails: boolean,
@@ -93,8 +91,7 @@ export function MdocPresentationActions(
         event.request,
         dependencies.getCredentials(),
       );
-      // Frame 26 opens with a card chosen: a valid card before an expired one, then the one
-      // holding the most requested details, then wallet order. Revoked cards are never chosen.
+      // Prefer valid cards, then requested-field coverage, then wallet order. Never select revoked cards.
       const selection = Object.fromEntries(
         matches.flatMap(documentMatch => {
           const [preferred] = documentMatch.candidates
@@ -169,7 +166,6 @@ export function MdocPresentationActions(
         },
       };
     }),
-    // Frame 32: tick every requested detail of a document again, or none.
     setAllFields: presentationModel.assign((context, event) => {
       if (
         event.type !== 'SELECT_ALL_FIELDS' &&

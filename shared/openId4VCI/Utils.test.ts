@@ -29,7 +29,6 @@ import {
 import {VCFormat} from '../VCFormat';
 import {BindingMethod} from './BindingMethods';
 
-// Mock VCProcessor
 jest.mock('../../components/VC/common/VCProcessor', () => ({
   VCProcessor: {
     processForRendering: jest.fn().mockResolvedValue({

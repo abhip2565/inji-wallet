@@ -527,7 +527,7 @@ describe('Presentation screen and actor', () => {
         });
       });
       finishConnectionPhases();
-      // verified readers show a details row; the others show a warning card (frames 28, 29)
+      // verified readers show a details row; the others show a warning card
       fireEvent.press(
         screen.getByLabelText(
           status === 'verified'
@@ -777,7 +777,6 @@ describe('Complete-request consent', () => {
   });
 
   it('lists requested details missing from the card and offers ticks only for the ones it holds', () => {
-    // design frame 31: the reader asks for blood_type, which the card does not hold
     const withMissingDetail: MdocRequest = {
       ...request,
       documents: [
@@ -1135,7 +1134,6 @@ describe('Complete-request consent', () => {
   });
 
   it('warns that the verifier will see an expired card, with the date it expired', () => {
-    // design frame 37
     const expired = credential('expired', true);
     (expired.verifiableCredential as any).processedCredential.issuerAuth[2] = {
       docType,
@@ -1171,7 +1169,6 @@ describe('Complete-request consent', () => {
   });
 
   it('still lets the holder share anyway when the verifier failed its identity check', () => {
-    // design frame 29: Decline leads, sharing stays possible
     const withFailedCheck: MdocRequest = {
       ...request,
       documents: [{...request.documents[0], readerTrust: {status: 'invalid'}}],
@@ -1209,7 +1206,6 @@ describe('Complete-request consent', () => {
     expect(props.onOpenIdentityHelp).toHaveBeenCalledTimes(1);
   });
 
-  // design frame 27: a reader asking for two documents
   const twoDocuments = (
     secondTrust: MdocRequest['documents'][number]['readerTrust'],
   ): MdocRequest => ({

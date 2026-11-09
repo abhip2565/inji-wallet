@@ -70,8 +70,7 @@ export function useShareScreen() {
     GOTO_ADD_CARD,
   );
   const readinessController = useMdocReadiness();
-  // Share nearby stays on screen while readiness is checked; Bluetooth off is a sheet over
-  // it (NBY-03). Only the other readiness problems take over the screen.
+  // Bluetooth-off readiness overlays the entry screen; other readiness issues replace it.
   const readinessIssue = presentationController
     ? undefined
     : isShowingMdocReadiness
@@ -82,7 +81,6 @@ export function useShareScreen() {
     readinessIssue !== undefined && !isShowingBluetoothSheet;
   const isShowingMdocFlow =
     !!presentationController || isShowingReadinessScreen;
-  // The mobile ID flow is full screen in the design: no bottom tabs while it runs.
   useEffect(() => {
     navigation.getParent()?.setOptions({
       tabBarStyle: isShowingMdocFlow

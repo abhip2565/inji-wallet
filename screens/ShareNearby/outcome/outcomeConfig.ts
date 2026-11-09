@@ -10,18 +10,12 @@ export type OutcomeIcon =
   | 'declined'
   | 'info';
 
-/**
- * How each outcome looks (frames 50–58, MDQ-06, 23): its icon, whether it shows tips or a
- * request summary, and which action leads. Nothing-shared failures lead with a new code.
- */
 export interface OutcomeLayout {
   icon: OutcomeIcon;
   primary: 'done' | 'newCode' | 'turnOnBluetooth';
   hasTips?: boolean;
-  /** Defaults to "Try this". */
   tipsTitleKey?: string;
   summary?: 'shared' | 'askedFor';
-  /** Defaults to "This session has ended."; none after a share. */
   footnoteKey?: string;
 }
 

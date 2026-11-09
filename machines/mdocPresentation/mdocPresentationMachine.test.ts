@@ -316,7 +316,6 @@ describe('mdoc presentation machine', () => {
     expect(flow.service.state.matches('presenting.sending')).toBe(true);
   });
 
-  // the reader asks for a detail the card does not hold (design frame 31)
   const requestWithMissingDetail: MdocRequest = {
     ...request,
     documents: [

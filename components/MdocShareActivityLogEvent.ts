@@ -5,7 +5,6 @@ import {ActivityLog} from './ActivityLogEvent';
 import {VCItemContainerFlowType} from '../shared/Utils';
 import type {MdocShareLogType} from '../machines/mdocPresentation/mdocPresentationModel';
 
-/** One card's part in an in-person mdoc share (Share nearby → Mobile ID QR code). */
 export class MdocShareActivityLog implements ActivityLog {
   type: MdocShareLogType | '';
   timestamp: number;

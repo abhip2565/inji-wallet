@@ -17,7 +17,7 @@ export function RequestHeading({
   isFollowUpRequest: boolean;
 }) {
   const {t} = useTranslation('ShareNearby');
-  // No design frame for a further request in the same session; this copy is a stopgap.
+  // TODO: Finalize the follow-up request copy when its design is available.
   if (isFollowUpRequest) {
     return (
       <>
@@ -40,7 +40,6 @@ export function RequestHeading({
   );
 }
 
-/** Frame 27: said after the verifier card when the reader asks for more than one card. */
 export function MultipleCardsIntro({cardCount}: {cardCount: number}) {
   const {t} = useTranslation('ShareNearby');
   return (

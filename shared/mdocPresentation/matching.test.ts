@@ -94,7 +94,6 @@ describe('matchRequest', () => {
   });
 
   it('offers a card that holds only some requested details, with the rest listed as missing', () => {
-    // frame 31: requested details that are not on the card are shown, and not shared
     const partialSigned = issuerSigned();
     partialSigned.nameSpaces[namespace] = [
       {elementIdentifier: 'given_name', elementValue: 'Kiran'},
@@ -132,7 +131,6 @@ describe('matchRequest', () => {
   });
 
   it('does not offer a card of the requested type that holds none of the requested details', () => {
-    // frame 36: nothing on the card answers the request, so there is no matching card
     const unrelatedSigned = issuerSigned();
     unrelatedSigned.nameSpaces[namespace] = [
       {elementIdentifier: 'unrequested', elementValue: 'private'},

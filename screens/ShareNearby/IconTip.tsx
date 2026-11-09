@@ -7,7 +7,6 @@ import {Theme} from '../../components/ui/styleUtils';
 const styles = Theme.ShareNearbyStyles;
 const engagementStyles = Theme.ShareNearbyEngagementStyles;
 
-/** An icon tile with a short title and line, as the help sheets. */
 export function IconTip({
   icon,
   title,

@@ -23,7 +23,6 @@ export function ShareScreen() {
   const {presentationController, readinessController} = shareScreenController;
   const isShowingMdocContent =
     !!presentationController || shareScreenController.isShowingMdocReadiness;
-  // MDQ-01–04: the code and connection screens carry the "Mobile ID QR code" header.
   const isShowingCodeScreens =
     !!presentationController?.isShowingEngagement ||
     !!presentationController?.isShowingExpiredCode;
@@ -78,7 +77,7 @@ export function ShareScreen() {
             }
           />
           {presentationController?.isReviewingRequest ? (
-            // The review scrolls its own content and pins its actions (frames 25–40).
+            // Request review owns scrolling so its actions stay pinned.
             <View style={styles.flexible}>
               <MdocPresentationScreen
                 presentationController={presentationController}

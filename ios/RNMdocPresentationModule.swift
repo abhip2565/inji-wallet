@@ -25,7 +25,6 @@ class RNMdocPresentationModule: NSObject, RCTBridgeModule {
     return false
   }
 
-  /// Runs one presentation; resolves with the result as JSON, rejects if it cannot start.
   @objc
   func present(_ optionsJson: String, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     Task {
@@ -99,7 +98,6 @@ class RNMdocPresentationModule: NSObject, RCTBridgeModule {
     RCTBridge.current()?.eventDispatcher().sendAppEvent(withName: eventName, body: body)
   }
 
-  /// Asks JS to sign with the wallet's key; returns the raw signature.
   fileprivate func sign(_ input: MdocSigningInput) async throws -> Data {
     let answer = try await askJS("onMdocSignRequest", [
       "dataToSign": base64Url(input.dataToSign),
@@ -202,7 +200,6 @@ class RNMdocPresentationModule: NSObject, RCTBridgeModule {
   }
 }
 
-/// MdocCallbacks for one presentation, forwarding to the module.
 private final class Callbacks: MdocCallbacks {
   private weak var module: RNMdocPresentationModule?
 

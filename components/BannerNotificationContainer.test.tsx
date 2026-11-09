@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from '@testing-library/react-native';
 import {BannerNotificationContainer} from './BannerNotificationContainer';
 
-// Mock all controllers
 jest.mock('./BannerNotificationController', () => ({
   UseBannerNotification: jest.fn(() => ({
     isBindingSuccess: false,

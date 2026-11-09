@@ -47,7 +47,6 @@ function VerifiedVerifier({
   );
 }
 
-/** Frames 25 (verified), 28 (unverified or unsigned) and 29 (failed check). */
 export function VerifierCard({
   readerTrust,
   onPress,

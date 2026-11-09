@@ -9,7 +9,6 @@ import {TransferProgress} from './TransferProgress';
 
 const styles = Theme.ShareNearbyStyles;
 
-/** Frame 46. */
 export function MdocSendingStatus({detailCount}: {detailCount: number}) {
   const {t} = useTranslation('ShareNearby');
   return (

@@ -12,7 +12,6 @@ import {docTypeName, getRequestedElements} from './requestUtils';
 const styles = Theme.ShareNearbyStyles;
 const reviewStyles = Theme.ShareNearbyReviewStyles;
 
-/** Frame 36: no card in the wallet answers any requested document, so there is nothing to review. */
 export function NoMatchingCard({
   matches,
   readerTrust,

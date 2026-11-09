@@ -1,4 +1,3 @@
-/** How a presentation runs; every field is optional and falls back to the library default. */
 export type MdocPresentationOptions = {
   /** Trusted reader root certificates, DER encoded as base64. */
   trustedReaderRoots?: string[];
@@ -12,7 +11,6 @@ export type ReaderTrust = {
   reason?: string;
 };
 
-/** One requested document: data elements per namespace, with whether the reader intends to keep each. */
 export type RequestedDocument = {
   docType: string;
   nameSpaces: Record<string, Record<string, boolean>>;

@@ -8,7 +8,6 @@ import {IconTip} from '../IconTip';
 
 const styles = Theme.ShareNearbyStyles;
 
-/** Frame 44. */
 export function RetentionHelp() {
   const {t} = useTranslation('ShareNearby');
   return (

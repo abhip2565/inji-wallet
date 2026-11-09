@@ -5,19 +5,16 @@ import {VCItemContainerFlowType} from '../shared/Utils';
 import {VCActivityLog} from './ActivityLogEvent';
 import {VPShareActivityLog} from './VPShareActivityLogEvent';
 
-// Mock TextItem
 jest.mock('./ui/TextItem', () => ({
   TextItem: jest.fn(() => null),
 }));
 
-// Mock HistoryScreenController
 jest.mock('../screens/History/HistoryScreenController', () => ({
   useHistoryTab: jest.fn(() => ({
     getWellKnownIssuerMap: jest.fn(() => ({display: [{name: 'Test Issuer'}]})),
   })),
 }));
 
-// Mock ActivityLogEvent
 jest.mock('./ActivityLogEvent', () => ({
   VCActivityLog: {
     getLogFromObject: jest.fn(obj => ({
@@ -28,7 +25,6 @@ jest.mock('./ActivityLogEvent', () => ({
   },
 }));
 
-// Mock VPShareActivityLogEvent
 jest.mock('./VPShareActivityLogEvent', () => ({
   VPShareActivityLog: {
     getLogFromObject: jest.fn(obj => ({
@@ -39,7 +35,6 @@ jest.mock('./VPShareActivityLogEvent', () => ({
   },
 }));
 
-// Mock MdocShareActivityLogEvent
 jest.mock('./MdocShareActivityLogEvent', () => ({
   MdocShareActivityLog: {
     getLogFromObject: jest.fn(obj => ({

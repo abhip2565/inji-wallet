@@ -63,12 +63,8 @@ function readDocType(
 }
 
 /**
- * Matches the Pixelpass-decoded MSO and namespaces. Every card of the requested docType that holds
- * at least one requested element is offered, with the requested elements it holds and those it
- * lacks (design frame 31: missing details are shown and not shared). This does not authorise
- * sharing; the consent flow applies card status and requires one selected card per requested
- * document before sending a response. Candidates retain the original VC for selection and the
- * filtering hook.
+ * Offer cards with the requested docType and at least one requested field. Matching does not
+ * authorize disclosure; consent validates card status, selection, and approved fields.
  */
 export function matchRequest(
   request: MdocRequest,

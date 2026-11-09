@@ -175,7 +175,6 @@ export function useMdocPresentationScreen(
       presentationActor.send(presentationEvents.DONE());
       onDone();
     },
-    // Back to Share nearby, where the entry screen says nothing was shared.
     BACK_TO_ENTRY: () => presentationActor.send(presentationEvents.DONE()),
     DISMISS: () => {
       presentationActor.send(presentationEvents.DISMISS());
@@ -185,7 +184,7 @@ export function useMdocPresentationScreen(
       presentationActor.send(presentationEvents.DONE());
       onViewHistory();
     },
-    // Frame 23: iOS can't switch Bluetooth on for the app, so it opens Settings instead.
+    // iOS cannot enable Bluetooth programmatically; open Settings instead.
     TURN_ON_BLUETOOTH: () => {
       if (Platform.OS === 'ios') {
         void Linking.openSettings();
@@ -200,7 +199,6 @@ export function useMdocPresentationScreen(
       presentationActor.send(presentationEvents.DISMISS());
       onScanInstead();
     },
-    // Frame 36: end the session quietly (no outcome screen) and go add the missing card.
     ADD_CARD: () => {
       presentationActor.send(presentationEvents.DISMISS());
       onAddCard();

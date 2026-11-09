@@ -52,7 +52,6 @@ export function MdocRequestReview({
       )?.availableElements.length ?? 0),
     0,
   );
-  //each documents has its own reader trust, so we need to find the least trusted one to display in the verifier card
   const readerTrust = leastTrustedReader(matches);
   const hasFailedVerifierCheck = readerTrust?.status === 'invalid';
   const cardCount = matches.length;

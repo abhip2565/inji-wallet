@@ -8,7 +8,6 @@ import {VerifierTrustBadge} from './VerifierTrustBadge';
 
 const styles = Theme.ShareNearbyStyles;
 
-/** Frames 41 and 42. */
 export function VerifierDetails({
   readerTrust,
   onClose,

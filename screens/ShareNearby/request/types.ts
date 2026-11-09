@@ -27,9 +27,7 @@ export interface MdocRequestReviewProps {
   onVerifyAndShare: () => void;
   onDeclineRequest: () => void;
   onRetryPreparation: () => void;
-  /** Frame 36: end the session and open the issuer list to add the missing card. */
   onAddCard?: () => void;
-  /** Frame 32: tick or untick every requested detail of a document. */
   onSelectAllFields?: (docType: string) => void;
   onClearAllFields?: (docType: string) => void;
 }

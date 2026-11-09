@@ -58,7 +58,7 @@ export function RequestReviewActions({
   );
 
   const isPartialShare = shareCount > 0 && shareCount < availableCount;
-  // Frame 34 only: a card is chosen but every detail is unticked (not "no card chosen yet").
+  // Distinguish a selected card with no approved details from an unselected card.
   const isNothingTicked = shareCount === 0 && availableCount > 0;
   const shareTitle =
     shareCount === 0
@@ -111,7 +111,7 @@ export function RequestReviewActions({
           />
         </>
       ) : hasFailedVerifierCheck ? (
-        // Frame 29: declining is the safe default, sharing is still possible.
+        // Default to declining when reader verification fails; explicit sharing remains available.
         <>
           <Button
             styles={styles.buttonContainer}
