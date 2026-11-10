@@ -92,6 +92,8 @@
 		FD8D20C92BBAACDF009AD01C /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FD8D20B62BBAACDF009AD01C /* SimpleLineIcons.ttf */; };
 		FD8D20CA2BBAACDF009AD01C /* FontAwesome6_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FD8D20B72BBAACDF009AD01C /* FontAwesome6_Brands.ttf */; };
 		FD8D20CB2BBAACDF009AD01C /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FD8D20B82BBAACDF009AD01C /* MaterialIcons.ttf */; };
+		AD0C00000000000000000011 /* RNScreenBrightnessModule.m in Sources */ = {isa = PBXBuildFile; fileRef = AD0C00000000000000000013 /* RNScreenBrightnessModule.m */; };
+		AD0C00000000000000000012 /* RNScreenBrightnessModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0C00000000000000000014 /* RNScreenBrightnessModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -182,6 +184,8 @@
 		FD8D20B62BBAACDF009AD01C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		FD8D20B72BBAACDF009AD01C /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		FD8D20B82BBAACDF009AD01C /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
+		AD0C00000000000000000013 /* RNScreenBrightnessModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNScreenBrightnessModule.m; sourceTree = "<group>"; };
+		AD0C00000000000000000014 /* RNScreenBrightnessModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNScreenBrightnessModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +240,8 @@
 				1E6875EC2CA5550F0086D870 /* RNOpenID4VPModule.swift */,
 				AD0C00000000000000000003 /* RNMdocPresentationModule.m */,
 				AD0C00000000000000000004 /* RNMdocPresentationModule.swift */,
+				AD0C00000000000000000013 /* RNScreenBrightnessModule.m */,
+				AD0C00000000000000000014 /* RNScreenBrightnessModule.swift */,
 				1D23B9CD47CFD7F3C87D202F /* PrivacyInfo.xcprivacy */,
 				1EED69F82DA913D30042EAFC /* IntentData.swift */,
 				1EED69FA2DA914130042EAFC /* RNDeepLinkIntentModule.swift */,
@@ -860,6 +866,8 @@
 				1E6875ED2CA5550F0086D870 /* RNOpenID4VPModule.swift in Sources */,
 				AD0C00000000000000000002 /* RNMdocPresentationModule.swift in Sources */,
 				AD0C00000000000000000001 /* RNMdocPresentationModule.m in Sources */,
+				AD0C00000000000000000012 /* RNScreenBrightnessModule.swift in Sources */,
+				AD0C00000000000000000011 /* RNScreenBrightnessModule.m in Sources */,
 				1E55C20B2DB120C2009DF38B /* RNDeepLinkIntentModule.swift in Sources */,
 				C3F6A9DD2E661896006C9904 /* RNInjiVcRenderer.swift in Sources */,
 				9C3BD8102EA8C8F800101656 /* RNVCVerifierModule.m in Sources */,

@@ -23,6 +23,7 @@ public class InjiPackage implements ReactPackage {
         modules.add(new RNPixelpassModule(reactApplicationContext));
         modules.add(new RNSecureKeystoreModule(reactApplicationContext));
         modules.add(new RNVersionModule());
+        modules.add(new RNScreenBrightnessModule(reactApplicationContext));
         modules.add(new RNWalletModule(new RNEventEmitter(reactApplicationContext), new Wallet(reactApplicationContext), reactApplicationContext));
         modules.add(new RNVerifierModule(new RNEventEmitter(reactApplicationContext), new Verifier(reactApplicationContext), reactApplicationContext));
         modules.add(new RNDeepLinkIntentModule(reactApplicationContext));

@@ -98,8 +98,7 @@ Open:
   entries, detail screens, or entries for declined/stopped/interrupted sessions yet.
 - Copy for design to fix: "Only you can end this session. The verifier can't." (MDQ-02/03; the
   reader can end it); the "Both of them" panel in NBY-02 (two items don't fit the Bluetooth
-  receive option); MDQ-05's "Brightness is already turned up" (not implemented) and "show the
-  Bluetooth QR code instead" (that option makes this phone the verifier); outcome frames say
+  receive option); "show the Bluetooth QR code instead" (that option makes this phone the verifier); outcome frames say
   "Scan again", our flow shows a new code.
 - Montserrat 500 renders as the system font on Android app-wide; these screens use 400 instead.
 
@@ -158,3 +157,18 @@ Selective disclosure and mdoc-specific success/failure history entries are imple
 whole-card and generic-history-only notes above are historical. The PR includes shared Badge,
 Checkbox, Header, Button, HelpIcon and existing confirmation banner reuse. Complete rendered
 Figma/device-size verification remains pending; source review is not visual certification.
+
+## QR brightness, 2026-11-09
+
+The live engagement QR automatically raises brightness and restores the prior level (unless externally adjusted) when the
+QR expires, the view changes, navigation loses focus, or the app becomes inactive. Android uses
+only the app window brightness override. Scan help confirms the boost only after native success;
+other cases retain the general readability guidance. A reusable ScreenBrightness native module
+owns the brightness override; useQrBrightness owns the QR lifecycle. The mdoc presentation
+bridge has no brightness responsibilities. A rebuilt app is required.
+
+External brightness adjustments yield control for the rest of that QR visit, including after
+backgrounding or opening Control Centre. The platform does not identify whether a person or
+automatic brightness caused a change, so both are respected. Suspending a boost retains this
+choice; releasing it ends the visit. Android removes its window override and follows the system
+setting without writing it; iOS preserves the externally chosen brightness.

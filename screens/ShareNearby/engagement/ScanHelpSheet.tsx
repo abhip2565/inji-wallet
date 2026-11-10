@@ -7,6 +7,7 @@ import {Button, Text} from '../../../components/ui';
 import Close from '../../../assets/shareNearby/close.svg';
 import Sun from '../../../assets/shareNearby/sun.svg';
 import Qr from '../../../assets/shareNearby/qr.svg';
+import Bluetooth from '../../../assets/shareNearby/bluetooth.svg';
 import {IconTip} from '../IconTip';
 
 const styles = Theme.ShareNearbyStyles;
@@ -14,10 +15,12 @@ const helpStyles = Theme.ShareNearbyHelpStyles;
 
 export function ScanHelpSheet({
   visible,
+  isBrightnessIncreased = false,
   onClose,
   onScanInstead,
 }: {
   visible: boolean;
+  isBrightnessIncreased?: boolean;
   onClose: () => void;
   onScanInstead: () => void;
 }) {
@@ -37,7 +40,16 @@ export function ScanHelpSheet({
       <IconTip
         icon={<Sun />}
         title={t('helpContent.scanReadableTitle')}
-        description={t('helpContent.scanReadableDescription')}
+        description={t(
+          isBrightnessIncreased
+            ? 'helpContent.scanBrightnessDescription'
+            : 'helpContent.scanReadableDescription',
+        )}
+      />
+      <IconTip
+        icon={<Bluetooth />}
+        title={t('helpContent.scanCodeTypeTitle')}
+        description={t('helpContent.scanCodeTypeDescription')}
       />
       <IconTip
         icon={<Qr width={16} height={16} />}

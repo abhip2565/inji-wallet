@@ -11,6 +11,8 @@ import type {VerifiableCredential} from '../../machines/VerifiableCredential/VCM
 import {MdocEngagement} from './engagement/MdocEngagement';
 import {EngagementSteps} from './engagement/EngagementSteps';
 import {ScanHelpSheet} from './engagement/ScanHelpSheet';
+import {useQrBrightness} from './engagement/useQrBrightness';
+import {useCountdown} from './useCountdown';
 import {MdocSendingStatus} from './sending/MdocSendingStatus';
 import {countApprovedElements} from '../../machines/mdocPresentation/mdocPresentationGuards';
 import {MdocRequestReview} from './request/MdocRequestReview';
@@ -49,6 +51,14 @@ export function MdocPresentationScreen({
     isStopConfirmationVisible,
     sendPresentationEvent,
   } = presentationController;
+  const qrCountdown = useCountdown(presentationContext.codeExpiresAt);
+  const isBrightnessIncreased = useQrBrightness(
+    isShowingEngagement &&
+      engagementStage === 'showingCode' &&
+      !!presentationContext.qrText &&
+      (presentationContext.codeExpiresAt === undefined ||
+        qrCountdown.remainingSeconds > 0),
+  );
   return (
     <>
       {/* The design shows the stepper while connecting, not on review, sending or outcomes. */}
@@ -176,6 +186,7 @@ export function MdocPresentationScreen({
       )}
       <ScanHelpSheet
         visible={isScanHelpVisible}
+        isBrightnessIncreased={isBrightnessIncreased}
         onClose={presentationController.CLOSE_SCAN_HELP}
         onScanInstead={presentationController.SCAN_INSTEAD}
       />

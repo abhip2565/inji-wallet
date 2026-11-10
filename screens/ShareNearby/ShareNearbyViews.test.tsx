@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-native/extend-expect';
-import {Animated, AppState, Platform, View} from 'react-native';
+import {Animated, AppState, NativeModules, Platform, View} from 'react-native';
 import {interpret} from 'xstate';
 import {
   act,
@@ -563,6 +563,42 @@ describe('Presentation screen and actor', () => {
     expect(screen.getByText('entry.mdocTitle')).toBeOnTheScreen();
   });
 
+  it('brightens the live QR, updates help, and restores when connecting', async () => {
+    const originalModule = NativeModules.ScreenBrightness;
+    const originalAppState = AppState.currentState;
+    const setBoostEnabled = jest.fn(async (enabled: boolean) => enabled);
+    const releaseBoost = jest.fn(async () => undefined);
+    NativeModules.ScreenBrightness = {
+      setBoostEnabled,
+      releaseBoost,
+      addListener: jest.fn(),
+      removeListeners: jest.fn(),
+    };
+    AppState.currentState = 'active';
+    const flow = start();
+    act(() => flow.callbacks.onQrReady('mdoc:brightness-test'));
+    const screen = renderPresentation(flow);
+    try {
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(setBoostEnabled).toHaveBeenLastCalledWith(true);
+      fireEvent.press(screen.getByLabelText('help'));
+      expect(
+        screen.getByText('helpContent.scanReadableTitle'),
+      ).toBeOnTheScreen();
+      expect(
+        screen.getByText('helpContent.scanBrightnessDescription'),
+      ).toBeOnTheScreen();
+      await act(async () => flow.callbacks.onProgress?.('connected'));
+      expect(releaseBoost).toHaveBeenCalledTimes(1);
+    } finally {
+      screen.unmount();
+      NativeModules.ScreenBrightness = originalModule;
+      AppState.currentState = originalAppState;
+    }
+  });
+
   it('opens the scan help from the header question mark on the code screen', () => {
     const flow = start();
     const screen = renderPresentation(flow);
@@ -570,6 +606,11 @@ describe('Presentation screen and actor', () => {
     fireEvent.press(screen.getByLabelText('help'));
 
     expect(screen.getByText('helpContent.scanReadableTitle')).toBeOnTheScreen();
+    expect(screen.getByText('helpContent.scanCodeTypeTitle')).toBeOnTheScreen();
+    expect(
+      screen.getByText('helpContent.scanCodeTypeDescription'),
+    ).toBeOnTheScreen();
+    expect(screen.getByText('helpContent.scanTheirsTitle')).toBeOnTheScreen();
   });
 
   it('opens the scan help from its dedicated link', () => {
